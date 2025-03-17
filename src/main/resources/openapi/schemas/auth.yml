@@ -1,0 +1,149 @@
+LoginRequest:
+  type: object
+  description: 로그인 요청
+  required:
+    - accountInfo
+  properties:
+    accountInfo:
+      type: object
+      description: 로그인 계정 정보
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: 사용자명 또는 이메일
+          example: user1
+        password:
+          type: string
+          description: 비밀번호
+          example: password123
+    options:
+      type: object
+      description: 로그인 옵션
+      properties:
+        rememberMe:
+          type: boolean
+          description: 로그인 상태 유지 여부
+          example: false
+
+LoginResponse:
+  type: object
+  description: 로그인 응답
+  required:
+    - authToken
+    - user
+  properties:
+    authToken:
+      type: object
+      description: 인증 토큰 정보
+      required:
+        - token
+        - refreshToken
+        - tokenExpiresAt
+      properties:
+        token:
+          type: string
+          description: 인증 토큰
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: 리프레시 토큰
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        tokenExpiresAt:
+          type: string
+          format: date-time
+          description: 토큰 만료 시간
+          example: 2023-03-14T13:34:56Z
+    user:
+      $ref: "./user.yml#/UserResponse"
+
+RegisterRequest:
+  type: object
+  description: 회원가입 요청
+  required:
+    - basicInfo
+    - accountInfo
+  properties:
+    basicInfo:
+      type: object
+      description: 사용자 기본 정보
+      required:
+        - username
+        - displayName
+      properties:
+        username:
+          type: string
+          description: 사용자명
+          example: user1
+        displayName:
+          type: string
+          description: 표시 이름
+          example: User One
+        profileImageUrl:
+          type: string
+          description: 프로필 이미지 URL
+          example: http://example.com/profiles/user1.jpg
+    accountInfo:
+      type: object
+      description: 사용자 계정 정보
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: 이메일 주소
+          example: user1@example.com
+        password:
+          type: string
+          description: 비밀번호
+          example: password123
+
+TokenResponse:
+  type: object
+  description: 토큰 응답
+  required:
+    - authToken
+  properties:
+    authToken:
+      type: object
+      description: 인증 토큰 정보
+      required:
+        - token
+        - refreshToken
+        - tokenExpiresAt
+      properties:
+        token:
+          type: string
+          description: 인증 토큰
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: 리프레시 토큰
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        tokenExpiresAt:
+          type: string
+          format: date-time
+          description: 토큰 만료 시간
+          example: 2023-03-14T13:34:56Z
+
+PasswordResetRequest:
+  type: object
+  description: 비밀번호 재설정 요청
+  required:
+    - accountInfo
+  properties:
+    accountInfo:
+      type: object
+      description: 계정 정보
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          description: 이메일 주소
+          example: user1@example.com

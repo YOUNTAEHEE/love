@@ -1,0 +1,311 @@
+# 공통 스키마 정의
+
+# 기본 응답 형태
+CommonResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      default: true
+    code:
+      type: string
+    message:
+      type: string
+
+# 페이지네이션 응답
+PaginationResponse:
+  type: object
+  properties:
+    page:
+      type: integer
+    size:
+      type: integer
+    totalItems:
+      type: integer
+    totalPages:
+      type: integer
+
+# 인증 컨텍스트
+AuthContext:
+  type: object
+  description: 인증 컨텍스트 정보
+  required:
+    - isAuthenticated
+    - isCurrentUser
+  properties:
+    isAuthenticated:
+      type: boolean
+      description: 현재 사용자의 인증 상태
+      example: true
+    isCurrentUser:
+      type: boolean
+      description: 요청한 사용자 정보가 현재 로그인한 사용자인지 여부
+      example: false
+
+# 소셜 관계 컨텍스트
+SocialContext:
+  type: object
+  description: 사용자 간 소셜 관계 정보
+  required:
+    - isFollowing
+    - isFollower
+  properties:
+    isFollowing:
+      type: boolean
+      description: 현재 사용자가 대상 사용자를 팔로우하는지 여부
+      example: true
+    isFollower:
+      type: boolean
+      description: 대상 사용자가 현재 사용자를 팔로우하는지 여부
+      example: false
+
+# 에러 응답
+ErrorResponse:
+  type: object
+  description: 에러 응답
+  properties:
+    status:
+      type: integer
+      format: int32
+      description: HTTP 상태 코드
+      example: 400
+    code:
+      type: string
+      description: 에러 코드
+      example: BAD_REQUEST
+    message:
+      type: string
+      description: 에러 메시지
+      example: 요청이 잘못되었습니다.
+    timestamp:
+      type: string
+      format: date-time
+      description: 에러 발생 시간
+      example: "2023-01-01T12:00:00Z"
+    path:
+      type: string
+      description: 에러가 발생한 API 경로
+      example: /api/auth/login
+    errors:
+      type: array
+      description: 상세 에러 목록
+      items:
+        type: object
+        properties:
+          field:
+            type: string
+            description: 에러가 발생한 필드
+            example: email
+          message:
+            type: string
+            description: 에러 메시지
+            example: 유효한 이메일 형식이 아닙니다.
+  required:
+    - status
+    - code
+    - message
+    - timestamp
+
+# ID 요청 파라미터
+IdParameter:
+  name: id
+  in: path
+  description: ID
+  required: true
+  schema:
+    type: integer
+    format: int64
+
+# 페이지네이션 요청 파라미터
+PageParameter:
+  name: page
+  in: query
+  description: 페이지 번호 (0부터 시작)
+  schema:
+    type: integer
+    default: 0
+
+SizeParameter:
+  name: size
+  in: query
+  description: 페이지 크기
+  schema:
+    type: integer
+    default: 20
+
+# 공통 기본 정보 타입
+BasicEntityInfo:
+  type: object
+  description: 공통 기본 엔티티 정보
+  properties:
+    id:
+      type: integer
+      format: int64
+      description: 고유 식별자
+    createdAt:
+      type: string
+      format: date-time
+      description: 생성 일시
+
+# 링크 프리뷰 정보 타입
+LinkPreviewInfo:
+  type: object
+  description: 링크 프리뷰 정보
+  properties:
+    url:
+      type: string
+      format: uri
+      description: 원본 URL
+    title:
+      type: string
+      description: 웹페이지 제목
+    description:
+      type: string
+      description: 웹페이지 설명
+    thumbnailUrl:
+      type: string
+      format: uri
+      description: 프리뷰 썸네일 URL
+    siteName:
+      type: string
+      description: 사이트 이름
+    favicon:
+      type: string
+      format: uri
+      description: 사이트 파비콘 URL
+    linkType:
+      type: string
+      enum: [EXTERNAL, PROJECT]
+      description: 링크 유형 (외부 링크 또는 프로젝트 링크)
+      default: EXTERNAL
+    projectInfo:
+      type: object
+      description: 프로젝트 링크인 경우 추가 정보 (우리 사이트 내부 링크)
+      properties:
+        projectId:
+          type: integer
+          format: int64
+          description: 프로젝트 ID
+        engagement:
+          $ref: "#/EngagementStats"
+          description: 프로젝트 참여 통계
+
+# 미디어 정보 타입
+MediaInfo:
+  type: object
+  description: 미디어 정보
+  properties:
+    mediaIds:
+      type: array
+      items:
+        type: integer
+        format: int64
+      description: 미디어 ID 목록
+    mediaUrls:
+      type: array
+      items:
+        type: string
+        format: uri
+      description: 미디어 URL 목록 (이미지, 비디오, 오디오 등)
+    links:
+      type: array
+      items:
+        $ref: "#/LinkPreviewInfo"
+      description: 링크 프리뷰 정보 목록
+
+# 참여 지표 정보 타입
+EngagementStats:
+  type: object
+  description: 참여 및 상호작용 통계
+  properties:
+    likeCount:
+      type: integer
+      description: 좋아요 수
+    retweetCount:
+      type: integer
+      description: 리트윗 수
+    commentCount:
+      type: integer
+      description: 댓글 수
+    viewCount:
+      type: integer
+      description: 조회수
+
+# 사용자 상호작용 정보 타입
+UserInteractionInfo:
+  type: object
+  description: 현재 사용자와의 상호작용 정보
+  properties:
+    isLiked:
+      type: boolean
+      description: 사용자가 좋아요 했는지 여부
+    isRetweeted:
+      type: boolean
+      description: 사용자가 리트윗 했는지 여부
+    isBookmarked:
+      type: boolean
+      description: 사용자가 북마크 했는지 여부
+
+# 추천 정보 타입
+RecommendationInfo:
+  type: object
+  description: 추천 관련 정보
+  properties:
+    recommendationId:
+      type: integer
+      format: int64
+      description: 추천 ID
+    reason:
+      type: string
+      description: 추천 이유
+    score:
+      type: number
+      format: double
+      description: 추천 점수
+
+# 타임스탬프 정보 타입
+TimeInfo:
+  type: object
+  description: 시간 관련 정보
+  properties:
+    createdAt:
+      type: string
+      format: date-time
+      description: 생성 시간
+    updatedAt:
+      type: string
+      format: date-time
+      description: 마지막 수정 시간
+
+# 알림 관련 설정 타입
+NotificationSettings:
+  type: object
+  description: 알림 설정 정보
+  properties:
+    emailNotifications:
+      type: boolean
+      description: 이메일 알림 설정
+    pushNotifications:
+      type: boolean
+      description: 푸시 알림 설정
+
+# 알림 유형별 설정 타입
+NotificationTypeSettings:
+  type: object
+  description: 알림 유형별 설정 정보
+  properties:
+    mentionNotifications:
+      type: boolean
+      description: 멘션 알림 설정
+    followNotifications:
+      type: boolean
+      description: 팔로우 알림 설정
+    likeNotifications:
+      type: boolean
+      description: 좋아요 알림 설정
+    retweetNotifications:
+      type: boolean
+      description: 리트윗 알림 설정
+    replyNotifications:
+      type: boolean
+      description: 답글 알림 설정

@@ -1,0 +1,116 @@
+UserResponse:
+  type: object
+  description: 사용자 기본 정보 응답
+  required:
+    - id
+    - username
+    - displayName
+    - email
+    - createdAt
+  properties:
+    id:
+      type: integer
+      format: int64
+      description: 사용자 ID
+      example: 1
+    username:
+      type: string
+      description: 사용자명
+      example: user1
+    displayName:
+      type: string
+      description: 표시 이름
+      example: User One
+    email:
+      type: string
+      format: email
+      description: 이메일 주소
+      example: user1@example.com
+    profileImageUrl:
+      type: string
+      description: 프로필 이미지 URL
+      example: https://example.com/profiles/user1.jpg
+    createdAt:
+      type: string
+      format: date-time
+      description: 가입 일시
+      example: 2023-01-01T00:00:00Z
+
+UserProfileResponse:
+  type: object
+  description: 사용자 상세 프로필 정보 응답
+  required:
+    - id
+    - username
+    - displayName
+    - email
+    - createdAt
+  properties:
+    id:
+      type: integer
+      format: int64
+      description: 사용자 ID
+      example: 1
+    username:
+      type: string
+      description: 사용자명
+      example: user1
+    displayName:
+      type: string
+      description: 표시 이름
+      example: User One
+    email:
+      type: string
+      format: email
+      description: 이메일 주소
+      example: user1@example.com
+    profileImageUrl:
+      type: string
+      description: 프로필 이미지 URL
+      example: https://example.com/profiles/user1.jpg
+    bio:
+      type: string
+      description: 자기소개
+      example: Hello, I'm a user of this platform.
+    location:
+      type: string
+      description: 위치
+      example: Seoul, Korea
+    website:
+      type: string
+      format: uri
+      description: 웹사이트
+      example: https://example.com
+    followersCount:
+      type: integer
+      description: 팔로워 수
+      example: 100
+    followingCount:
+      type: integer
+      description: 팔로잉 수
+      example: 50
+    createdAt:
+      type: string
+      format: date-time
+      description: 가입 일시
+      example: 2023-01-01T00:00:00Z
+    lastActiveAt:
+      type: string
+      format: date-time
+      description: 마지막 활동 시간
+      example: 2023-02-01T00:00:00Z
+    accountContext:
+      type: object
+      description: 계정 관련 컨텍스트 정보
+      properties:
+        isVerified:
+          type: boolean
+          description: 인증된 계정 여부
+          example: true
+        isPrivate:
+          type: boolean
+          description: 비공개 계정 여부
+          example: false
+    socialContext:
+      $ref: "../common.yml#/SocialContext"
+      description: 소셜 관계 컨텍스트

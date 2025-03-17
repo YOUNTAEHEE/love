@@ -1,0 +1,150 @@
+# 인증 API
+
+auth_login:
+  post:
+    summary: 사용자 로그인
+    description: 이메일과 비밀번호를 입력하여 로그인합니다. 성공 시 액세스 토큰과 리프레시 토큰을 반환합니다.
+    operationId: authLogin
+    tags:
+      - auth
+    requestBody:
+      description: 로그인 요청 정보
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/auth.yml#/LoginRequest"
+    responses:
+      "200":
+        description: 성공
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/auth.yml#/TokenResponse"
+      "400":
+        description: 잘못된 요청
+      "401":
+        description: 인증 실패
+
+auth_register:
+  post:
+    summary: 회원 가입
+    description: 새로운 사용자 계정을 등록합니다.
+    operationId: authRegister
+    tags:
+      - auth
+    requestBody:
+      description: 회원 가입 요청 정보
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/auth.yml#/RegisterRequest"
+    responses:
+      "201":
+        description: 성공
+      "400":
+        description: 잘못된 요청
+      "409":
+        description: 중복된 아이디 또는 이메일
+
+auth_refresh:
+  post:
+    summary: 토큰 갱신
+    description: 리프레시 토큰을 사용하여 새 액세스 토큰을 발급받습니다.
+    operationId: authRefresh
+    tags:
+      - auth
+    parameters:
+      - name: refreshToken
+        in: header
+        description: 리프레시 토큰
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: 성공
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/auth.yml#/TokenResponse"
+      "401":
+        description: 유효하지 않은 토큰
+
+auth_logout:
+  post:
+    summary: 로그아웃
+    description: 현재 로그인된 사용자를 로그아웃 처리합니다.
+    operationId: authLogout
+    tags:
+      - auth
+    responses:
+      "200":
+        description: 성공
+
+auth_password_reset:
+  post:
+    summary: 비밀번호 재설정 요청
+    description: 비밀번호 재설정을 위한 이메일을 발송합니다.
+    operationId: authPasswordReset
+    tags:
+      - auth
+    requestBody:
+      description: 비밀번호 재설정 요청 정보
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/auth.yml#/PasswordResetRequest"
+    responses:
+      "200":
+        description: 성공
+      "400":
+        description: 잘못된 요청
+      "404":
+        description: 사용자를 찾을 수 없음
+
+auth_me:
+  get:
+    summary: 인증된 사용자 정보 조회
+    description: 현재 인증된 사용자의 상세 정보를 반환합니다.
+    operationId: getCurrentUser
+    tags:
+      - auth
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: 성공
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user.yml#/UserProfileResponse"
+      "401":
+        description: 인증되지 않은 요청
+      "404":
+        description: 사용자를 찾을 수 없음
+
+auth_state:
+  get:
+    operationId: getAuthState
+    summary: 인증 상태 정보 조회
+    description: 현재 사용자의 인증 컨텍스트 정보를 조회합니다.
+    tags:
+      - auth
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: 인증 상태 조회 성공
+        content:
+          application/json:
+            schema:
+              $ref: "../common.yml#/AuthContext"
+      "401":
+        description: 인증되지 않음
+        content:
+          application/json:
+            schema:
+              $ref: "../common.yml#/ErrorResponse"
